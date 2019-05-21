@@ -1,6 +1,11 @@
 import tensorflow as tf
 from constants import used_columns
 
+def prepare_data(data_frame):
+  data_frame = data_frame[used_columns]
+
+  return data_frame[data_frame['imInTram'].map(lambda x: x in [0.0, 1.0])]
+
 def input_fn(all_data, num_epochs, batch_size, shuffle):
   for col in all_data.columns:
     if not col in used_columns:
@@ -19,8 +24,8 @@ def input_fn(all_data, num_epochs, batch_size, shuffle):
 def split_data_frame(df, train_set_fraction):
   DATA_SIZE = df.count()['ax']
   train_size = int(DATA_SIZE * 0.7)
-  test_size = DATA_SIZE - train_size
 
+  # uncomment to shuffle data and train set
   df = df.sample(frac=1).reset_index(drop=True)
 
   train_df = df.iloc[:train_size].reset_index(drop=True)
