@@ -23,7 +23,7 @@ def input_fn(all_data, num_epochs, batch_size, shuffle):
 
 def split_data_frame(df, train_set_fraction):
   DATA_SIZE = df.count()['ax']
-  train_size = int(DATA_SIZE * 0.7)
+  train_size = int(DATA_SIZE * 0.6)
 
   # uncomment to shuffle data and train set
   df = df.sample(frac=1).reset_index(drop=True)

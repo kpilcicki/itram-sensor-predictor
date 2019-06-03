@@ -21,7 +21,7 @@ data_frame = pandas.read_json(readings_file)
 data_frame = prepare_data(data_frame)
 
 
-train_df, test_df = split_data_frame(data_frame, train_set_fraction=0.7)
+train_df, test_df = split_data_frame(data_frame, train_set_fraction=0.6)
 
 ax = fc.numeric_column('ax')
 ay = fc.numeric_column('ay')
@@ -35,10 +35,11 @@ big_hidden_units=[1024,512, 256]
 ok_hidden_units=[15,100]
 mid_hidden_units=[20, 40, 20]
 small_hidden_units=[20, 1]
-EPOCHS_NUM = 40
+EPOCHS_NUM = 100
 # EPOCHS_NUM = 1000
 ADAM_LEARNING_RATE = 0.005
 proxAdagrad_LEARNING_RATE = 0.15
+ADADELTA_LEARNING_RATE = 0.01
 DECAY_STEPS = 100
 
 adam_optimizer = lambda: tf.train.AdamOptimizer(
@@ -51,14 +52,18 @@ adagrad_optimizer = tf.train.ProximalAdagradOptimizer(
       learning_rate=proxAdagrad_LEARNING_RATE,
       l1_regularization_strength=0.001)
 
+adadelta_optimizer = tf.train.AdadeltaOptimizer(
+  learning_rate = ADADELTA_LEARNING_RATE
+)
+
 
 tested_nums = []
 accuracies=[]
 precisions=[]
 recalls=[]
-for learning_rate in [x * 0.01 for x in [1]]:
+for learning_rate in [x * 0.001 for x in [1]]:
   print(f"testing: {learning_rate}")
-  test_hidden_units = [15, 100]
+  test_hidden_units = ok_hidden_units
   estimator = tf.estimator.DNNClassifier(
     feature_columns=[ax, ay, az, gx, gy, gz],
     hidden_units=test_hidden_units,
@@ -74,6 +79,8 @@ for learning_rate in [x * 0.01 for x in [1]]:
   recalls.append(result["recall"])
   print(f"A: {result['accuracy']},  B: {result['precision']}")
   estimator.export_savedmodel(export_dir_base='adam-dnn', serving_input_receiver_fn=serving_input_receiver_fn)
+
+
 pl.show_multiple_series([accuracies, precisions, recalls])
-  # pprint_result(result)
-  # peek_classification(estimator, test_df)
+pprint_result(result)
+peek_classification(estimator, test_df)
