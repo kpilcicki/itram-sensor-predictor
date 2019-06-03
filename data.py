@@ -16,7 +16,7 @@ def input_fn(all_data, num_epochs, batch_size, shuffle):
   ds = tf.data.Dataset.from_tensor_slices((dict(all_data), label))
 
   if shuffle:
-    ds = ds.shuffle(50000)
+    ds = ds.shuffle(10000)
 
   ds = ds.batch(batch_size).repeat(num_epochs)
   return ds

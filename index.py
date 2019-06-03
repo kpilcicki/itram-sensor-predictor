@@ -39,7 +39,7 @@ EPOCHS_NUM = 100
 # EPOCHS_NUM = 1000
 ADAM_LEARNING_RATE = 0.005
 proxAdagrad_LEARNING_RATE = 0.15
-ADADELTA_LEARNING_RATE = 0.1
+ADADELTA_LEARNING_RATE = 0.01
 DECAY_STEPS = 100
 
 adam_optimizer = lambda: tf.train.AdamOptimizer(
@@ -57,7 +57,6 @@ adadelta_optimizer = tf.train.AdadeltaOptimizer(
 )
 
 
-
 tested_nums = []
 accuracies=[]
 precisions=[]
@@ -68,7 +67,7 @@ for learning_rate in [x * 0.001 for x in [1]]:
   estimator = tf.estimator.DNNClassifier(
     feature_columns=[ax, ay, az, gx, gy, gz],
     hidden_units=test_hidden_units,
-    optimizer=adadelta_optimizer
+    optimizer=adam_optimizer
   )
 
   estimator.train(input_fn=lambda:input_fn(train_df, num_epochs=EPOCHS_NUM, shuffle=False, batch_size=64), steps=None)
