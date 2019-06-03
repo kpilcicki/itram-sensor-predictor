@@ -16,14 +16,14 @@ def input_fn(all_data, num_epochs, batch_size, shuffle):
   ds = tf.data.Dataset.from_tensor_slices((dict(all_data), label))
 
   if shuffle:
-    ds = ds.shuffle(10000)
+    ds = ds.shuffle(50000)
 
   ds = ds.batch(batch_size).repeat(num_epochs)
   return ds
 
 def split_data_frame(df, train_set_fraction):
   DATA_SIZE = df.count()['ax']
-  train_size = int(DATA_SIZE * 0.7)
+  train_size = int(DATA_SIZE * 0.6)
 
   # uncomment to shuffle data and train set
   df = df.sample(frac=1).reset_index(drop=True)
